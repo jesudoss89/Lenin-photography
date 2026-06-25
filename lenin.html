@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lenin Photography Studio</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+background: #0f0f12;
+color:#f5f5f7;
+position: relative;
+overflow-x: hidden;
+}
+
+#bg-canvas {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+z-index: -1;
+pointer-events: auto;
+}
+
+html{
+scroll-behavior:smooth;
+}
+
+/* HEADER WITH LUXURY GOLD GRADIENT */
+header{
+background: linear-gradient(135deg, #1a1a24, #111116);
+color: white;
+padding: 15px 10%;
+display: flex;
+justify-content: space-between;
+align-items: center;
+position: sticky;
+top: 0;
+z-index: 1000;
+box-shadow: 0 4px 30px rgba(212, 175, 55, 0.1);
+border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+flex-wrap: wrap; 
+gap: 15px;
+}
+
+.logo{
+display:flex;
+align-items:center;
+}
+
+.logo img{
+width:75px;
+height:75px;
+border-radius:50%;
+object-fit:cover;
+border:2px solid #d4af37;
+box-shadow:0 0 15px rgba(212,175,55,0.3);
+}
+
+nav{
+display: flex;
+align-items: center;
+flex-wrap: wrap;
+gap: 25px;
+}
+
+nav a{
+color:#e5e5e7;
+text-decoration:none;
+font-weight:600;
+position: relative;
+padding: 5px 0;
+transition: color 0.3s;
+}
+
+nav a:hover {
+color: #d4af37;
+}
+
+nav a::after {
+content: '';
+position: absolute;
+bottom: 0;
+left: 0;
+width: 0;
+height: 2px;
+background: #d4af37;
+transition: width 0.3s ease;
+}
+nav a:hover::after {
+width: 100%;
+}
+
+/* WHATSAPP FLOAT BUTTON */
+.whatsapp{
+position:fixed;
+right:20px;
+bottom:20px;
+width:65px;
+height:65px;
+background:#25D366;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:32px;
+color:white;
+text-decoration:none;
+box-shadow:0 5px 20px rgba(0,0,0,.5);
+z-index:9999;
+animation:float 2s infinite;
+}
+
+@keyframes float{
+0%,100%{transform:translateY(0);}
+50%{transform:translateY(-10px);}
+}
+
+/* STATUS STORIES SYSTEM */
+.status-container {
+padding: 20px 10% 0 10%;
+display: flex;
+gap: 20px;
+align-items: center;
+overflow-x: auto;
+background: transparent;
+}
+
+.status-circle {
+width: 80px;
+height: 80px;
+border-radius: 50%;
+border: 3px solid #d4af37;
+padding: 3px;
+cursor: pointer;
+position: relative;
+transition: transform 0.3s;
+background: #1a1a24;
+}
+
+.status-circle:hover {
+transform: scale(1.05);
+}
+
+.status-circle img {
+width: 100%;
+height: 100%;
+border-radius: 50%;
+object-fit: cover;
+}
+
+.status-label {
+font-size: 12px;
+text-align: center;
+color: #d4af37;
+margin-top: 5px;
+font-weight: 600;
+}
+
+/* HERO SECTION WITH GOLD ACCENT */
+.hero{
+height:80vh;
+background: linear-gradient(rgba(15,15,18,0.6), rgba(15,15,18,0.85)),
+url('https://images.unsplash.com/photo-1492691527719-9d1e07e534b4'); 
+background-size:cover;
+background-position:center;
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+color:white;
+position: relative;
+padding: 0 20px;
+}
+
+.hero-content h1{
+font-size:58px;
+margin-bottom:20px;
+animation:fadeUp 1.2s cubic-bezier(0.1, 1, 0.1, 1);
+font-weight: 800;
+letter-spacing: -0.5px;
+background: linear-gradient(135deg, #fff, #d4af37);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+text-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+@keyframes fadeUp{
+from{ opacity:0; transform:translateY(40px); }
+to{ opacity:1; transform:translateY(0); }
+}
+
+.hero-content p{
+font-size:22px;
+margin-bottom:30px;
+opacity: 0.95;
+color: #ccbba0;
+}
+
+.btn{
+background: linear-gradient(135deg, #b8860b, #d4af37);
+padding:16px 40px;
+border-radius:50px;
+color:#111;
+font-weight:bold;
+text-decoration:none;
+box-shadow: 0 0 25px rgba(212,175,55,0.3);
+transition:.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+display: inline-block;
+}
+
+.btn:hover{
+transform:scale(1.05) translateY(-2px);
+box-shadow: 0 10px 25px rgba(212,175,55,0.5);
+}
+
+/* DASHBOARD / REAL STORAGE UPLOAD PANEL */
+.upload-panel {
+margin: 40px 10%;
+padding: 30px;
+background: rgba(30, 30, 40, 0.75);
+border-radius: 24px;
+border: 1px solid rgba(212, 175, 55, 0.3);
+backdrop-filter: blur(10px);
+}
+
+.upload-panel h2 {
+color: #d4af37;
+margin-bottom: 20px;
+font-size: 24px;
+}
+
+.upload-form {
+display: flex;
+flex-wrap: wrap;
+gap: 15px;
+align-items: center;
+}
+
+.upload-form select, .upload-form button, .custom-file-upload {
+padding: 12px 20px;
+border-radius: 8px;
+border: 1px solid #d4af37;
+background: #111;
+color: white;
+font-weight: 600;
+}
+
+/* Hiding original boring input file styling */
+.upload-form input[type="file"] {
+    display: none;
+}
+
+.custom-file-upload {
+    background: #1a1a24;
+    cursor: pointer;
+    display: inline-block;
+    transition: background 0.3s;
+}
+
+.custom-file-upload:hover {
+    background: #252533;
+    border-color: #fff;
+}
+
+.upload-form input[type="text"] {
+padding: 12px 20px;
+border-radius: 8px;
+border: 1px solid #d4af37;
+background: #111;
+color: white;
+font-weight: 600;
+}
+
+.upload-form button {
+background: linear-gradient(135deg, #b8860b, #d4af37);
+color: #111;
+cursor: pointer;
+transition: transform 0.2s;
+}
+
+.upload-form button:hover {
+transform: scale(1.03);
+}
+
+/* DYNAMIC GALLERY WORK SECTION */
+.gallery-section {
+padding: 60px 10%;
+}
+
+.gallery-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+gap: 30px;
+margin-top: 30px;
+}
+
+.gallery-item {
+background: #1a1a24;
+border-radius: 16px;
+overflow: hidden;
+border: 1px solid rgba(255,255,255,0.05);
+position: relative;
+box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+transition: transform 0.3s;
+}
+
+.gallery-item:hover {
+transform: translateY(-5px);
+border-color: #d4af37;
+}
+
+.gallery-item img, .gallery-item video {
+width: 100%;
+height: 250px;
+object-fit: cover;
+}
+
+.gallery-info {
+padding: 15px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+background: #13131a;
+}
+
+.gallery-info h4 {
+color: #ccbba0;
+}
+
+.delete-btn {
+background: #ff4d4d;
+color: white;
+border: none;
+padding: 6px 12px;
+border-radius: 6px;
+cursor: pointer;
+font-size: 12px;
+font-weight: bold;
+}
+
+/* STATS */
+.stats{
+padding:40px 10%;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:25px;
+text-align:center;
+}
+
+.stat-box{
+background: rgba(26, 26, 36, 0.85);
+backdrop-filter: blur(12px);
+padding:35px 20px;
+border-radius:24px;
+box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+border: 1px solid rgba(212, 175, 55, 0.15);
+transition: transform 0.4s ease, border-color 0.4s ease;
+}
+
+.stat-box:hover {
+transform: translateY(-5px);
+border-color: #d4af37;
+}
+
+.stat-box h2{
+color:#d4af37;
+font-size:44px;
+font-weight: 800;
+}
+
+/* SERVICES SECTION */
+.services{
+padding:60px 10% 80px 10%;
+}
+
+.title{
+text-align:center;
+font-size:42px;
+margin-bottom:50px;
+color:#d4af37;
+font-weight: 800;
+letter-spacing: -0.5px;
+}
+
+.service-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:30px;
+}
+
+.service-card{
+background: rgba(26, 26, 36, 0.85);
+backdrop-filter:blur(15px);
+border: 1px solid rgba(255,255,255,0.05);
+padding:40px 25px;
+border-radius:24px;
+transition: transform 0.4s ease, border-color 0.4s ease;
+}
+
+.service-card:hover{
+transform: translateY(-6px);
+border-color: #d4af37;
+box-shadow: 0 15px 35px rgba(212,175,55,0.05);
+}
+
+.service-card i{
+font-size:52px;
+color:#d4af37;
+margin-bottom:20px;
+}
+
+.service-card h3{
+margin-bottom:12px;
+font-size: 22px;
+font-weight: 700;
+color: white;
+}
+
+.service-card p {
+color: #a0a0ab;
+line-height: 1.6;
+}
+
+/* OWNER SECTION */
+.team-section {
+padding: 80px 10%;
+text-align: center;
+}
+
+.member-block {
+max-width: 650px;
+margin: 0 auto;
+background: rgba(26, 26, 36, 0.85);
+backdrop-filter: blur(15px);
+padding: 45px 35px;
+border-radius: 28px;
+border: 1px solid rgba(212, 175, 55, 0.15);
+transition: transform 0.4s ease, border-color 0.4s ease;
+}
+
+.member-block:hover {
+transform: translateY(-5px);
+border-color: #d4af37;
+}
+
+.member-block img {
+width: 210px;
+height: 210px;
+border-radius: 50%;
+object-fit: cover;
+margin-bottom: 25px;
+border: 4px solid #d4af37;
+box-shadow: 0 8px 20px rgba(212,175,55,0.2);
+}
+
+.member-block h2 {
+color: #d4af37;
+margin-bottom: 6px;
+font-size: 28px;
+}
+
+.member-block .designation {
+color: #ccbba0;
+font-weight: 700;
+text-transform: uppercase;
+font-size: 14px;
+letter-spacing: 1.5px;
+margin-bottom: 18px;
+}
+
+.member-block p {
+font-size: 16.5px;
+line-height: 1.7;
+color: #a0a0ab;
+}
+
+/* CONTACT BOX */
+.contact{
+background: linear-gradient(135deg, #1a1a24, #0f0f12);
+padding:100px 10% 80px 10%;
+border-top: 1px solid rgba(212,175,55,0.2);
+}
+
+.contact-box-card {
+background: rgba(255, 255, 255, 0.03);
+border: 1px solid rgba(255, 255, 255, 0.08);
+color: white;
+padding: 40px 30px;
+border-radius: 24px;
+text-align: center;
+transition: transform 0.4s, border-color 0.4s;
+}
+
+.contact-box-card:hover {
+transform: translateY(-6px);
+border-color: #d4af37;
+background: #1a1a24;
+}
+
+.contact-box-card i {
+font-size: 52px;
+color: #d4af37;
+margin-bottom: 20px;
+}
+
+footer{
+background:#09090c;
+color:#777;
+text-align:center;
+padding:25px;
+font-size: 14px;
+border-top: 1px solid rgba(255,255,255,0.02);
+}
+
+@media screen and (max-width: 768px) {
+    header { padding: 15px 5%; flex-direction: column; }
+    nav { justify-content: center; width: 100%; }
+    .hero-content h1 { font-size: 36px; }
+    .title { font-size: 32px; }
+    .stats, .services, .team-section, .contact { padding: 50px 5%; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<header>
+<div class="logo">
+<img src="logo.jpeg" alt="Lenin Photography Studio Logo">
+</div>
+<nav>
+<a href="#">Home</a>
+<a href="#services">Our Services</a>
+<a href="#gallery">Live Portfolio</a>
+<a href="#owner">The Owner</a>
+<a href="#contact">Contact</a>
+</nav>
+</header>
+
+<div class="status-container" id="statusContainer">
+    </div>
+
+<section class="hero">
+<div class="hero-content">
+<h1>Lenin Photography Studio</h1>
+<p>Precision | Artistry - Capturing Your Golden Moments Forever</p>
+<a href="#gallery" class="btn">View Live Shoots</a>
+</div>
+</section>
+
+<div class="upload-panel">
+    <h2><i class="fas fa-sliders-h"></i> Owner Smart Studio Control</h2>
+    <div class="upload-form">
+        <select id="uploadType" onchange="updateUploadLabel()">
+            <option value="photo">Upload Portfolio Photo</option>
+            <option value="video">Upload Portfolio Video</option>
+            <option value="status">Post 24Hr WhatsApp Status</option>
+        </select>
+        
+        <label class="custom-file-upload">
+            <input type="file" id="studioFileInput" accept="image/*,video/*" onchange="displayFileName()">
+            <i class="fas fa-cloud-upload-alt"></i> <span id="fileLabelText">Choose Local Photo/Video</span>
+        </label>
+
+        <input type="text" id="mediaTitle" placeholder="Event Title (e.g., Wedding)">
+        <button onclick="handleOwnerUpload()">Publish Live</button>
+    </div>
+</div>
+
+<section class="stats">
+<div class="stat-box">
+<h2>100+</h2>
+<p>Events Completed</p>
+</div>
+<div class="stat-box">
+<h2>2+</h2>
+<p>Years Experience</p>
+</div>
+</section>
+
+<section class="services" id="services">
+<h1 class="title">Our Services</h1>
+<div class="service-grid">
+<div class="service-card">
+<i class="fas fa-church"></i>
+<h3>Wedding & Reception</h3>
+<p>Capturing the beautiful bond, sacred rituals, and joyful celebration of your big day with standard cinematic layouts.</p>
+</div>
+<div class="service-card">
+<i class="fas fa-heart"></i>
+<h3>Pre & Post Wedding Shoot</h3>
+<p>Creative outdoor and indoor romantic shoots designed with artistic concepts, tailored presets, and stunning visuals.</p>
+</div>
+<div class="service-card">
+<i class="fas fa-users"></i>
+<h3>Solo & Group Portraits</h3>
+<p>High-end candid modeling shoots, family frame portraits, and modern portfolio clicks with professional lighting setups.</p>
+</div>
+<div class="service-card">
+<i class="fas fa-camera-retro"></i>
+<h3>Commercial & Event Shoots</h3>
+<p>From birthday bashes, corporate milestones, pub functions to product advertisements — premium frame coverage guaranteed.</p>
+</div>
+</div>
+</section>
+
+<section class="gallery-section" id="gallery">
+    <h1 class="title">Live Shoots & Reels</h1>
+    <div class="gallery-grid" id="galleryGrid">
+        <div class="gallery-item" id="sample1">
+            <img src="https://images.unsplash.com/photo-1519741497674-611481863552" alt="Wedding">
+            <div class="gallery-info">
+                <h4>Traditional Wedding Frame</h4>
+                <button class="delete-btn" onclick="this.parentElement.parentElement.remove()">Delete</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="team-section" id="owner">
+<h1 class="title">The Owner</h1>
+<div class="member-block">
+<img src="owner.jpeg" alt="Studio Owner & Lead Photographer">
+<h2>LENIN M</h2>
+<div class="designation">Founder & Lead Photographer</div>
+<p>Passionate visual storyteller dedicated to framing emotions with precision and artistry. Bringing years of professional camera experience to turn your special memories into lifetime cinematic milestones.</p>
+</div>
+</section>
+
+<section class="contact" id="contact">
+<h1 class="title">Contact Us</h1>
+<div class="service-grid">
+<div class="contact-box-card">
+<i class="fas fa-phone-alt"></i>
+<h3>Phone Number</h3>
+<p>+91 9500978301</p>
+</div>
+<div class="contact-box-card">
+<i class="fas fa-envelope"></i>
+<h3>Email Address</h3>
+<p>leninstudio@gmail.com</p>
+</div>
+<div class="contact-box-card">
+<i class="fas fa-location-dot"></i>
+<h3>Studio Address</h3>
+<p>Lenin Photography Studio,<br>Tamil Nadu, India</p>
+</div>
+<div class="contact-box-card">
+<i class="fas fa-clock"></i>
+<h3>Opening Hours</h3>
+<p>9:00 AM - 9:00 PM</p>
+</div>
+</div>
+</section>
+
+<footer>
+© 2026 Lenin Photography Studio. All Rights Reserved.
+</footer>
+
+<a href="https://wa.me/919500978301?text=Hello%20Lenin%20Photography%20Studio,%20I%20want%20to%20book%20a%20shoot!" class="whatsapp" target="_blank">
+<i class="fab fa-whatsapp"></i>
+</a>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    loadStatuses();
+});
+
+// Updates file upload label dynamic restrictions based on dropdown change
+function updateUploadLabel() {
+    const type = document.getElementById("uploadType").value;
+    const fileInput = document.getElementById("studioFileInput");
+    const labelText = document.getElementById("fileLabelText");
+    
+    fileInput.value = ""; // reset file choice
+    if (type === "photo") {
+        fileInput.accept = "image/*";
+        labelText.innerText = "Choose Local Photo";
+    } else if (type === "video") {
+        fileInput.accept = "video/*";
+        labelText.innerText = "Choose Local Video";
+    } else if (type === "status") {
+        fileInput.accept = "image/*";
+        labelText.innerText = "Choose Status Image";
+    }
+}
+
+function displayFileName() {
+    const fileInput = document.getElementById("studioFileInput");
+    const labelText = document.getElementById("fileLabelText");
+    if(fileInput.files.length > 0) {
+        labelText.innerText = fileInput.files[0].name;
+    }
+}
+
+function handleOwnerUpload() {
+    const type = document.getElementById("uploadType").value;
+    const fileInput = document.getElementById("studioFileInput");
+    const title = document.getElementById("mediaTitle").value || "New Creative Shoot";
+
+    if (fileInput.files.length === 0) {
+        alert("மச்சான், மொதல்ல ஸ்டோரேஜ்ல இருந்து போட்டோ அல்லது வீடியோவ செலக்ட் பண்ணுடா!");
+        return;
+    }
+
+    const file = fileInput.files[0];
+    // FileReader converts real local file into temporary local base64 URL strings for secure browser runtime viewing
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+        const localDataUrl = e.target.result;
+
+        if(type === "photo") {
+            createGalleryItem(localDataUrl, title, false);
+        } else if(type === "video") {
+            createGalleryItem(localDataUrl, title, true);
+        } else if(type === "status") {
+            addStatus(localDataUrl);
+        }
+
+        // Reset fields after successful launch
+        fileInput.value = "";
+        document.getElementById("mediaTitle").value = "";
+        document.getElementById("fileLabelText").innerText = "Choose Local Photo/Video";
+    };
+
+    reader.readAsDataURL(file);
+}
+
+function createGalleryItem(url, title, isVideo) {
+    const grid = document.getElementById("galleryGrid");
+    const item = document.createElement("div");
+    item.className = "gallery-item";
+    
+    if(isVideo) {
+        item.innerHTML = `<video src="${url}" controls></video>
+                          <div class="gallery-info"><h4>${title}</h4><button class="delete-btn" onclick="this.parentElement.parentElement.remove()">Delete</button></div>`;
+    } else {
+        item.innerHTML = `<img src="${url}" alt="Shoot">
+                          <div class="gallery-info"><h4>${title}</h4><button class="delete-btn" onclick="this.parentElement.parentElement.remove()">Delete</button></div>`;
+    }
+    grid.prepend(item);
+}
+
+function addStatus(url) {
+    let statuses = JSON.parse(localStorage.getItem("studio_statuses")) || [];
+    const newStatus = {
+        id: Date.now(),
+        url: url,
+        timestamp: Date.now()
+    };
+    statuses.push(newStatus);
+    localStorage.setItem("studio_statuses", JSON.stringify(statuses));
+    loadStatuses();
+}
+
+function loadStatuses() {
+    const container = document.getElementById("statusContainer");
+    container.innerHTML = "";
+    let statuses = JSON.parse(localStorage.getItem("studio_statuses")) || [];
+    const now = Date.now();
+    
+    // Auto-Delete status logic: Filtering strictly items posted within the last 24 Hours
+    statuses = statuses.filter(s => (now - s.timestamp) < 24 * 60 * 60 * 1000);
+    localStorage.setItem("studio_statuses", JSON.stringify(statuses));
+
+    if(statuses.length > 0) {
+        statuses.forEach(s => {
+            const div = document.createElement("div");
+            div.className = "status-circle";
+            div.onclick = () => {
+                // Clicking opens status image preview window in a nice new tab
+                const newTab = window.open();
+                newTab.document.write(`<img src="${s.url}" style="max-width:100%; height:auto; display:block; margin:20px auto; background:#111; box-shadow:0 0 20px rgba(0,0,0,0.5);">`);
+                newTab.document.body.style.background = "#0f0f12";
+            };
+            div.innerHTML = `<img src="${s.url}"><div class="status-label">Live Status</div>`;
+            container.appendChild(div);
+        });
+    }
+}
+
+// PREMIUM BACKGROUND WAVE ANIMATION
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+let mouse = { x: null, y: null, radius: 160 };
+
+window.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
+window.addEventListener('mouseout', () => { mouse.x = null; mouse.y = null; });
+function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+let increment = 0;
+function animate() {
+    requestAnimationFrame(animate);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    ctx.fillStyle = 'rgba(212, 175, 55, 0.02)';
+    ctx.beginPath();
+    ctx.moveTo(0, canvas.height);
+    for (let i = 0; i <= canvas.width; i++) {
+        const y = Math.sin(i * 0.002 + increment) * 40 + (canvas.height * 0.7);
+        ctx.lineTo(i, y);
+    }
+    ctx.lineTo(canvas.width, canvas.height);
+    ctx.fill();
+
+    increment += 0.005;
+}
+animate();
+</script>
+
+</body>
+</html>
