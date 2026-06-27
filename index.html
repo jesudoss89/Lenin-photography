@@ -666,7 +666,6 @@ border-top: 1px solid rgba(255,255,255,0.02);
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getDatabase, ref, push, onChildAdded, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-  import { getStorage, ref as sRef, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
   // Your Firebase Configuration object
   const firebaseConfig = {
@@ -674,7 +673,7 @@ border-top: 1px solid rgba(255,255,255,0.02);
     authDomain: "lenin-studio-f2880.firebaseapp.com",
     databaseURL: "https://lenin-studio-f2880-default-rtdb.asia-southeast1.firebasedatabase.app",
     projectId: "lenin-studio-f2880",
-    storageBucket: "lenin-studio-f2880.firebasestorage.app",
+    storageBucket: "lenin-studio-f2880.appspot.com",
     messagingSenderId: "42015984354",
     appId: "1:42015984354:web:3ccd992123777aae58ecbb",
     measurementId: "G-PMJPB718RW"
@@ -683,9 +682,7 @@ border-top: 1px solid rgba(255,255,255,0.02);
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
-  const storage = getStorage(app);
 
-  // Attach functions to window object so inline HTML 'onclick' works perfectly
   window.updateUploadLabel = function() {
       const type = document.getElementById("uploadType").value;
       const fileInput = document.getElementById("studioFileInput");
@@ -723,55 +720,44 @@ border-top: 1px solid rgba(255,255,255,0.02);
       }
 
       const file = fileInput.files[0];
-      const storageRef = sRef(storage, 'studio/' + Date.now() + '_' + file.name);
+      
+      // Convert File to Base64 (No Firebase Storage Needed!)
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = function () {
+          const base64String = reader.result;
 
-      // Upload to Firebase Storage
-      uploadBytes(storageRef, file).then((snapshot) => {
-          getDownloadURL(snapshot.ref).then((downloadURL) => {
-              if (type === "status") {
-                  // Save Status metadata in Database
-                  const statusRef = ref(db, 'statuses');
-                  push(statusRef, {
-                      url: downloadURL,
-                      storagePath: snapshot.ref.fullPath,
-                      timestamp: Date.now()
-                  });
-              } else {
-                  // Save Portfolio (Photo/Video) metadata in Database
-                  const galleryRef = ref(db, 'gallery');
-                  push(galleryRef, {
-                      url: downloadURL,
-                      storagePath: snapshot.ref.fullPath,
-                      title: title,
-                      type: type,
-                      timestamp: Date.now()
-                  });
-              }
+          if (type === "status") {
+              const statusRef = ref(db, 'statuses');
+              push(statusRef, {
+                  url: base64String,
+                  timestamp: Date.now()
+              });
+          } else {
+              const galleryRef = ref(db, 'gallery');
+              push(galleryRef, {
+                  url: base64String,
+                  title: title,
+                  type: type,
+                  timestamp: Date.now()
+              });
+          }
 
-              // Reset fields
-              fileInput.value = "";
-              document.getElementById("mediaTitle").value = "";
-              document.getElementById("fileLabelText").innerText = "Choose Local Photo/Video";
-              alert("வெற்றிகரமாக பதிவேற்றப்பட்டது, மச்சான்!");
-          });
-      }).catch((error) => {
-          console.error("Upload failed: ", error);
-          alert("அப்லோட் செய்வதில் ஏதோ பிரச்சனை மச்சான்!");
-      });
+          fileInput.value = "";
+          document.getElementById("mediaTitle").value = "";
+          document.getElementById("fileLabelText").innerText = "Choose Local Photo/Video";
+          alert("வெற்றிகரமாக பதிவேற்றப்பட்டது, மச்சான்!");
+      };
+      reader.onerror = function (error) {
+          console.error("Error converting file: ", error);
+          alert("பைல் அப்லோட் செய்வதில் ஏதோ பிரச்சனை மச்சான்!");
+      };
   }
 
-  window.deleteGalleryItem = function(key, storagePath, element) {
+  window.deleteGalleryItem = function(key, element) {
       if(confirm("மச்சான், இதை நிரந்தரமாக அழிக்கவா?")) {
-          // Delete from storage
-          const fileRef = sRef(storage, storagePath);
-          deleteObject(fileRef).then(() => {
-              // Delete from database
-              remove(ref(db, 'gallery/' + key)).then(() => {
-                  element.remove();
-              });
-          }).catch((err) => {
-              // File unique case handling: delete database fallback if storage misses it
-              remove(ref(db, 'gallery/' + key)).then(() => { element.remove(); });
+          remove(ref(db, 'gallery/' + key)).then(() => {
+              element.remove();
           });
       }
   }
@@ -785,15 +771,13 @@ border-top: 1px solid rgba(255,255,255,0.02);
       item.className = "gallery-item";
       
       if(data.type === "video") {
-          item.innerHTML = `<video src="${data.url}" controls></video>
-                            <div class="gallery-info"><h4>${data.title}</h4><button class="delete-btn">Delete</button></div>`;
+          item.innerHTML = `<video src="${data.url}" controls></video><div class="gallery-info"><h4>${data.title}</h4><button class="delete-btn">Delete</button></div>`;
       } else {
-          item.innerHTML = `<img src="${data.url}" alt="Shoot">
-                            <div class="gallery-info"><h4>${data.title}</h4><button class="delete-btn">Delete</button></div>`;
+          item.innerHTML = `<img src="${data.url}" alt="Shoot"><div class="gallery-info"><h4>${data.title}</h4><button class="delete-btn">Delete</button></div>`;
       }
       
       item.querySelector('.delete-btn').onclick = function() {
-          window.deleteGalleryItem(key, data.storagePath, item);
+          window.deleteGalleryItem(key, item);
       };
       
       grid.prepend(item);
@@ -807,10 +791,6 @@ border-top: 1px solid rgba(255,255,255,0.02);
 
       // Check if older than 24 hours
       if ((now - data.timestamp) > 24 * 60 * 60 * 1000) {
-          // Auto remove old status from storage & database
-          try {
-              deleteObject(sRef(storage, data.storagePath));
-          } catch(e) {}
           remove(ref(db, 'statuses/' + key));
           return;
       }
